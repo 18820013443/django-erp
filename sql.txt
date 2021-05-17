@@ -1,0 +1,46 @@
+from sales.models import Customers,OrdersHeader,OrdersDetail
+Customers.objects.create(name='kk',address='GZ',phone='18820013444')
+c = Customers.objects.get(pk=1)
+
+OrdersHeader.objects.create(customer=c)
+d = OrdersHeader.objects.get(pk=1)
+OrdersDetail.objects.create(clothe_num='999',color='green', amount='10', price='10',order_header=d)
+
+Customers.objects.create(name='kk',address='GZ',phone='18820013444')
+
+
+
+from warehouse.models import Income,Product,Color
+Income.objects.create(bag_num=2,clothe_num='999',color='red',amount=100)
+Product.objects.create(clothe_num='998')
+
+
+
+
+from sales.models import Orders,Customers,Dates
+from sales.serializers import CustomerSerializers, OrderSerializers
+q = Customers.objects.all()
+s = CustomerSerializers(instance=q,many=True)
+s.data
+
+
+
+{
+    "order_num": "",
+    "name": "GG",
+    "phone": "18820013448",
+    "address": "FoShan",
+    "order_detail": [{
+        "clothe_num": "999",
+        "color": "green",
+        "amount": "10",
+        "price": "10",
+        },
+        ],
+    "delivered": false
+}
+
+
+from sales.models import Customers, OrdersHeader, OrdersDetail
+from django.db.models import Q
+q = OrdersDetail.objects.filter(Q(clothe_num="999",color="green",order_header__issued_all=True) | Q(clothe_num="999",color="green",order_header__issued_partial=True))
