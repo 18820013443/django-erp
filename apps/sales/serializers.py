@@ -46,7 +46,7 @@ class OrderSerializer(serializers.ModelSerializer):
         return order_header
 
     def update(self, instance, validated_data):
-        print(validated_data)
+        # print(validated_data)
         order_detail = validated_data.pop('ordersdetail_set')
         customer = validated_data.pop('customer')
         # order_header = validated_data.pop('order_header')
@@ -58,9 +58,40 @@ class OrderSerializer(serializers.ModelSerializer):
         # instance.customer.update(**customer)
         # instance.update(**order_header)
         order_detail_lst = OrdersDetail.objects.filter(order_header=instance)
+
+        detail_lst, od_lst = [], []
+        for o in order_detail_lst:
+            detail = []
+            detail.append(o.clothe_num)
+            detail.append(o.color)
+            detail_lst.append(detail)
+        
+        for d in order_detail:
+            od = []
+            od.append(d['clothe_num'])
+            od.append(d['color'])
+            od_lst.append(od)
+        # print(detail_lst)
+
         for odl in order_detail_lst:
+            db_lst = []
+            db_lst.append(odl.clothe_num)
+            db_lst.append(odl.color)
+
+            if not db_lst in od_lst and len(db_lst) > 0: # 数据库中有，但是request提交的数据没有，要删除
+                odl.delete()
+
+        order_detail_lst = OrdersDetail.objects.filter(order_header=instance)
+
+        if len(order_detail_lst) == 0:
             for dic in order_detail:
-                if odl.clothe_num == dic['clothe_num'] and odl.color == dic['color']:
+               OrdersDetail.objects.create(order_header=instance, clothe_num=dic['clothe_num'],color=dic['color'],amount=dic['amount'],price=dic['price'])
+            return instance
+
+        for odl in order_detail_lst: # 数据库的值
+            for dic in order_detail:
+                request_lst = []
+                if odl.clothe_num == dic['clothe_num'] and odl.color == dic['color']: # 数据库和request提交的数据都有，要修改
                     odl.clothe_num = dic['clothe_num']
                     odl.color = dic['color']
                     odl.amount = dic['amount']
@@ -68,6 +99,12 @@ class OrderSerializer(serializers.ModelSerializer):
                     # odl.issued_num = dic['issued_num']
                     # odl.pending_num = odl.amount - dic['issued_num']
                     odl.save()
+                else:
+                    request_lst.append(dic['clothe_num'])
+                    request_lst.append(dic['color'])
+                    # print(request_lst)
+                    if not request_lst in detail_lst: # request提交的数据有，数据库中没有，要创建
+                        OrdersDetail.objects.create(order_header=instance, clothe_num=dic['clothe_num'],color=dic['color'],amount=dic['amount'],price=dic['price'])
         return instance
 
             
