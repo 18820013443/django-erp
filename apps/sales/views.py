@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 from sales.models import OrdersHeader, Customers,OrdersDetail
 import django_filters
+from sales.filters import OrderFilter, CustomerFilter
 from rest_framework.response import Response
 from account.utils.auth import UserAuthentication
 
@@ -12,28 +13,14 @@ from account.utils.auth import UserAuthentication
 class MyPageNumberPagination(PageNumberPagination):
     page_size = 10 # 定义每页数据量的大小
     page_size_query_param = 'size' # 定义请求参数中size的关键字
-    max_page_size = 10 # 定义每页中最大显示数据
+    max_page_size = 50 # 定义每页中最大显示数据
     page_query_param = 'page'  # 定义请求参数中page的关键字
-
-class OrderFilter(django_filters.rest_framework.FilterSet):
-    date = django_filters.DateFilter(field_name='order_date')
-    # number = django_filters.CharFilter(field_name='ordersheader__ordersdetail__clothe_num')
-    customer = django_filters.CharFilter(field_name='customer__name')
-    class Meta:
-        model = OrdersHeader
-        # fields = ['date','customer','number', 'issued_all']
-        fields = ['date','customer', 'issued_all']
-
-class CustomerFilter(django_filters.rest_framework.FilterSet):
-    class Meta:
-        model = Customers
-        fields = ['name','address','phone']
 
 class OrdersView(viewsets.ModelViewSet):
     
     # authentication_classes = [UserAuthentication,]
     serializer_class = OrderSerializer
-    queryset = OrdersHeader.objects.all()
+    queryset = OrdersHeader.objects.all().order_by('-id')
     pagination_class = MyPageNumberPagination
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_fields = ['date','customer','number', 'issued_all']
@@ -83,7 +70,7 @@ class OrdersView(viewsets.ModelViewSet):
 
 class CustomerView(viewsets.ModelViewSet):
     serializer_class = CustomerSerializer
-    queryset = Customers.objects.all()
+    queryset = Customers.objects.all().order_by('-id')
     pagination_class = MyPageNumberPagination
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_class = CustomerFilter
@@ -92,7 +79,7 @@ class CustomerView(viewsets.ModelViewSet):
 
 class GoodsIssueView(viewsets.ModelViewSet):
     serializer_class = GoodsIssueSerializer
-    queryset = OrdersHeader.objects.all()
+    queryset = OrdersHeader.objects.all().order_by('-id')
     pagination_class = MyPageNumberPagination
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_fields = ['date','customer','number', 'issued_all']

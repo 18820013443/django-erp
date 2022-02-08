@@ -15,7 +15,7 @@ class InventoryFilter(django_filters.rest_framework.FilterSet):
 
 class InventoryView(viewsets.ModelViewSet):
     serializer_class = InventorySerializer
-    queryset = Color.objects.all()
+    queryset = Color.objects.all().order_by('-id')
     pagination_class = MyPageNumberPagination
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_class = InventoryFilter
@@ -28,7 +28,7 @@ class IncomeFilter(django_filters.rest_framework.FilterSet):
 
 class IncomeView(viewsets.ModelViewSet):
     serializer_class = IncomeSerializer
-    queryset = Income.objects.all()
+    queryset = Income.objects.all().order_by('-id')
     pagination_class = MyPageNumberPagination
     filter_backends = (django_filters.rest_framework.DjangoFilterBackend,)
     filter_class = IncomeFilter

@@ -19,7 +19,7 @@ class Customers(models.Model):
 
 
 class OrdersHeader(models.Model):
-    order_date = models.DateField(auto_now_add=True)
+    order_date = models.DateField()
     order_num = models.CharField(max_length=12, unique=True,blank=True,null=False)
     # delivered = models.BooleanField(default=False)
     customer = models.ForeignKey(Customers, related_name='order_detail',on_delete=models.CASCADE)

@@ -13,7 +13,7 @@ class Color(models.Model):
     amount = models.IntegerField()
 
 class Income(models.Model):
-    date = models.DateField(auto_now=True)
+    date = models.DateField(auto_now_add=True)
     bag_num = models.IntegerField()
     clothe_num = models.CharField(max_length=20)
     color = models.CharField(max_length=10)

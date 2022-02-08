@@ -32,14 +32,16 @@ class OrderSerializer(serializers.ModelSerializer):
 
     
     def create(self, validated_data):
-        print(validated_data)
+        # print(validated_data)
         order_details = validated_data.pop('ordersdetail_set')
         # print(validated_data)
+        order_date = validated_data.pop('order_date')
         validated_data = validated_data.get('customer')
         customer = Customers.objects.filter(name=validated_data['name']).first()
         if not customer:
             customer = Customers.objects.create(**validated_data)
-        order_header = OrdersHeader.objects.create(customer=customer)
+        print(order_date)
+        order_header = OrdersHeader.objects.create(customer=customer,order_date=order_date)
         # print(order_details)
         for order_detail in order_details:
             OrdersDetail.objects.create(order_header=order_header,**order_detail)
@@ -47,6 +49,9 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # print(validated_data)
+        order_date = validated_data.get('order_date')
+        instance.order_date = order_date
+        instance.save()
         order_detail = validated_data.pop('ordersdetail_set')
         customer = validated_data.pop('customer')
         # order_header = validated_data.pop('order_header')
@@ -140,6 +145,7 @@ class GoodsIssueSerializer(serializers.ModelSerializer):
         lst_pending_num = []
         order_detail_lst = OrdersDetail.objects.filter(order_header=instance)
         for odl in order_detail_lst:
+            isInventoryShorted = False
             for dic in order_detail:
                 if odl.clothe_num == dic['clothe_num'] and odl.color == dic['color']:
                     pre_issued_num = odl.issued_num
@@ -147,6 +153,9 @@ class GoodsIssueSerializer(serializers.ModelSerializer):
                     odl.pending_num = odl.amount - dic['issued_num']
                     # 减少库存数量
                     p = Color.objects.filter(product__clothe_num=dic['clothe_num'],color=dic['color']).first()
+                    if not p:
+                        isInventoryShorted = True
+                        continue
                     p.amount = p.amount + pre_issued_num - dic['issued_num']
                     # p.amount -= dic['issued_num']
                     print(p.amount)
@@ -160,7 +169,7 @@ class GoodsIssueSerializer(serializers.ModelSerializer):
                 else:
                     issue_flg += "fail"
         print(issue_flg)
-        if len(set(lst_pending_num)) == 1 and lst_pending_num[0] == 0:
+        if len(set(lst_pending_num)) == 1 and lst_pending_num[0] == 0 and isInventoryShorted == False:
             instance.issued_all = True
             instance.issued_partial = False
             instance.save()
