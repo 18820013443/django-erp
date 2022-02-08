@@ -1,5 +1,5 @@
 from django.db import models
-# from warehouse.models import Product, Color
+from warehouse.models import Color
 import warehouse.models
 from warehouse.models import get_amount
 # from datetime import datetime
@@ -70,6 +70,7 @@ class OrdersDetail(models.Model):
     clothe_num = models.CharField(max_length=20)
     color = models.CharField(max_length=10)
     amount = models.IntegerField()
+    inventory_num = models.IntegerField(default=0)
     issued_num = models.IntegerField(default=0)
     pending_num = models.IntegerField(default=0)
     price = models.FloatField()
@@ -92,8 +93,17 @@ class OrdersDetail(models.Model):
             order_price += detail.total_price
         return order_price
 
+    @property
+    def get_inventory_num(self):
+        inventory_num = 0
+        inventory_num_lst = Color.objects.filter(clothe_num=self.clothe_num, color=self.color)
+        if len(inventory_num_lst) > 0:
+            inventory_num = inventory_num_lst[0].amount
+        return inventory_num
+
     def save(self, *args, **kwarg):
         self.total_price = self.get_total_price
+        self.inventory_num = self.get_inventory_num
         # self.pending_num = self.amount - self.issued_num
         super(OrdersDetail, self).save(*args, **kwarg)
         # print(self.get_order_price)
