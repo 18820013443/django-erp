@@ -153,6 +153,7 @@ class GoodsIssueSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         order_detail = validated_data.pop('ordersdetail_set')
         issue_flg = ""
+        issuedAll, issuedPartial = True, True
         lst_pending_num = []
         order_detail_lst = OrdersDetail.objects.filter(order_header=instance)
         for odl in order_detail_lst:

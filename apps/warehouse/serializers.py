@@ -16,9 +16,17 @@ class InventorySerializer(serializers.ModelSerializer):
         color = validated_data['color']
         amount = validated_data['amount']
         p = warehouse.models.Product.objects.filter(clothe_num=clothe_num).first()
-        if not p:
+        if not p: # 如果产品不存在，创建产品，创建颜色和数量
             p = warehouse.models.Product.objects.create(clothe_num=clothe_num)
-        c = warehouse.models.Color.objects.create(product=p,color=color,amount=amount)
+            c = warehouse.models.Color.objects.create(product=p,color=color,amount=amount)
+        else:
+            c = warehouse.models.Color.objects.filter(product=p,color=color).first()
+            if c: # 查看款号和颜色是否存在，如果存在, 增加数量保存
+                c.amount += amount
+                c.save()
+            else: # 如果不存在，创建新的记录
+                c = warehouse.models.Color.objects.create(product=p,color=color,amount=amount)
+        
         return c
     
     def update(self, instance, validated_data):
