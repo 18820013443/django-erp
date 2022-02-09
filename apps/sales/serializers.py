@@ -167,6 +167,8 @@ class GoodsIssueSerializer(serializers.ModelSerializer):
                     p = Color.objects.filter(product__clothe_num=dic['clothe_num'], color=dic['color']).first()
                     if not p:
                         isInventoryShorted = True
+                        issuedAll = False
+                        issuedPartial = False
                         continue
                     p.amount = p.amount + pre_issued_num - dic['issued_num']
                     # p.amount -= dic['issued_num']
