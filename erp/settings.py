@@ -160,3 +160,5 @@ REST_FRAMEWORK = {
 #     'USE_SESSION_AUTH': False,
 #     'JSON_EDITOR': False, # False，用户可以自己编辑格式，不用按照serializers中的数据添加。True，会有多个输入框，输入serializer对应的字段的值
 #     }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

@@ -11,9 +11,17 @@ class OrderDetailSerializer(serializers.ModelSerializer):
 
 
 class OrderDetailIssueSerializer(serializers.ModelSerializer):
+    inventory_num = serializers.SerializerMethodField()
     class Meta:
         model = OrdersDetail
         exclude = ['price', 'total_price']
+
+    def get_inventory_num(self, obj):
+        inventory_num = 0
+        inventory_num_lst = Color.objects.filter(product__clothe_num=obj.clothe_num, color=obj.color)
+        if len(inventory_num_lst) > 0:
+            inventory_num = inventory_num_lst[0].amount
+        return inventory_num
 
 
 class OrderSerializer(serializers.ModelSerializer):

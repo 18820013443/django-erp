@@ -7,10 +7,12 @@ from django.db.models import Q
 class Product(models.Model):
     clothe_num = models.CharField(max_length=20,unique=True)
 
+
 class Color(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     color = models.CharField(max_length=10)
     amount = models.IntegerField()
+
 
 class Income(models.Model):
     date = models.DateField(auto_now_add=True)
@@ -44,6 +46,7 @@ class Income(models.Model):
 '''
     get_amount --> 所有的income减去outcome的结果
 '''
+
 def get_amount(clothe_num, color):
     # order_list = sales.models.OrdersDetail.objects.filter(clothe_num=clothe_num,color=color,order_header__delivered=True)
     order_list = sales.models.OrdersDetail.objects.filter(Q(clothe_num=clothe_num,color=color,order_header__issued_all=True) | Q(clothe_num=clothe_num,color=color,order_header__issued_partial=True))
