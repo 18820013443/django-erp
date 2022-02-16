@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'sales',
     'warehouse',
     'documents',
+    'dashboard',
     'django_filters',
 ]
 

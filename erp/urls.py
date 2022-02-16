@@ -19,12 +19,13 @@ from rest_framework_swagger.views import get_swagger_view
 from rest_framework_swagger.renderers import SwaggerUIRenderer, OpenAPIRenderer
 # from rest_framework import permissions
 schema_view = get_swagger_view(title="ERP Project")#, renderer_classes=[OpenAPIRenderer, SwaggerUIRenderer])
-print(schema_view)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('account.urls')),
     path('sales/', include('sales.urls')),
     path('warehouse/', include('warehouse.urls')),
     path('docs/', schema_view),
-    path('documents/',include('documents.urls'))
+    path('documents/',include('documents.urls')),
+    path('dashboard/', include('dashboard.urls'))
 ]
+print(schema_view)

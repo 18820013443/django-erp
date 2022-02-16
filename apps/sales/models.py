@@ -6,10 +6,11 @@ from warehouse.models import get_amount
 import datetime
 import time
 
+
 # Create your models here.
 # class Dates(models.Model):
-    # orders = models.ForeignKey(Orders,on_delete=models.CASCADE)
-    # date = models.DateField(auto_now=True)
+# orders = models.ForeignKey(Orders,on_delete=models.CASCADE)
+# date = models.DateField(auto_now=True)
 
 class Customers(models.Model):
     name = models.CharField(max_length=20, unique=True)
@@ -20,30 +21,32 @@ class Customers(models.Model):
 
 class OrdersHeader(models.Model):
     order_date = models.DateField()
-    order_num = models.CharField(max_length=12, unique=True,blank=True,null=False)
+    order_num = models.CharField(max_length=12, unique=True, blank=True, null=False)
     # delivered = models.BooleanField(default=False)
-    customer = models.ForeignKey(Customers, related_name='order_detail',on_delete=models.CASCADE)
-    order_price = models.FloatField(blank=True,null=True)
+    customer = models.ForeignKey(Customers, related_name='order_detail', on_delete=models.CASCADE)
+    order_price = models.FloatField(blank=True, null=True)
     issued_all = models.BooleanField(default=False)
     issued_partial = models.BooleanField(default=False)
+
     # date = models.ForeignKey(Dates,on_delete=models.CASCADE)
 
     # 0001
     @property
     def get_order_number(self):
         date = datetime.date.today().strftime('%Y%m%d')
-        num = len(OrdersHeader.objects.filter(order_date=datetime.date.today())) + 1
+        # num = len(OrdersHeader.objects.filter(order_date=datetime.date.today())) + 1
+        num = len(OrdersHeader.objects.filter(order_num__startswith=date)) + 1
         # num = len(OrdersHeader.objects.all()) + 1
-        print("num:",num)
-        
+        print("num:", num)
+
         if len(str(num)) == 1:
-            order_num = '%s%s%s'%(date,'000',num)
-        elif len(str(num)) ==2:
-            order_num = '%s%s%s'%(date,'00',num)
-        elif len(str(num)) ==3:
-            order_num = '%s%s%s'%(date,'0',num)
-        elif len(str(num)) ==4:
-            order_num = '%s%s'%(date,num)
+            order_num = '%s%s%s' % (date, '000', num)
+        elif len(str(num)) == 2:
+            order_num = '%s%s%s' % (date, '00', num)
+        elif len(str(num)) == 3:
+            order_num = '%s%s%s' % (date, '0', num)
+        elif len(str(num)) == 4:
+            order_num = '%s%s' % (date, num)
         # num = ""
         # for i in range(count-1):
         #     num = num + '0'
@@ -52,9 +55,6 @@ class OrdersHeader(models.Model):
         # else:
         #     order_num = '%s%s'%(date, num)
         return order_num
-
-   
-
 
     def save(self, *args, **kwarg):
         # try:
@@ -74,9 +74,9 @@ class OrdersDetail(models.Model):
     issued_num = models.IntegerField(default=0)
     pending_num = models.IntegerField(default=0)
     price = models.FloatField()
-    total_price = models.FloatField(blank=True,null=False)
+    total_price = models.FloatField(blank=True, null=False)
     # order_header = models.ForeignKey(OrdersHeader, blank=True,null=False,related_name='order_detail',on_delete=models.CASCADE)
-    order_header = models.ForeignKey(OrdersHeader, blank=True,null=False,on_delete=models.CASCADE)
+    order_header = models.ForeignKey(OrdersHeader, blank=True, null=False, on_delete=models.CASCADE)
 
     @property
     def get_total_price(self):
@@ -136,21 +136,9 @@ class OrdersDetail(models.Model):
 
 #     def get_pending_num(self):
 #         pass
-    
+
 #     def get_issue_all(self):
 #         pass
 
 #     def get_order_header(self):
 #         pass
-
-
-
-
-
-
-
-
-
-
-
-
