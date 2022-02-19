@@ -26,10 +26,10 @@ class BaseDateListSerializer(serializers.Serializer):
         return date_list
 
 
-class BaseHalfYearsMonthsListSerializer(serializers.Serializer):
-    x_pre_half_years_months = serializers.SerializerMethodField()
+class BaseSevenMonthsListSerializer(serializers.Serializer):
+    x_pre_seven_months = serializers.SerializerMethodField()
 
-    def get_x_pre_half_years_months(self, obj):
+    def get_x_pre_seven_months(self, obj):
         result_list = []
         current_date = a.now()
         str_current_month = current_date.strftime('%b')
@@ -38,7 +38,7 @@ class BaseHalfYearsMonthsListSerializer(serializers.Serializer):
             result_list.append((current_date.shift(months=-i)).strftime('%b'))
         return result_list
 
-    def get_pre_half_years_month_list(self):
+    def get_pre_seven_months_list(self):
         date_list = []
         current_date = a.now()
         date_list.append(current_date)
@@ -147,7 +147,7 @@ class PreviousSevenDaysSalesCountSerializer(BaseDateListSerializer):
         return result_list
 
 
-class PreviousSevenMonthsRevenueSerializer(BaseHalfYearsMonthsListSerializer):
+class PreviousSevenMonthsRevenueSerializer(BaseSevenMonthsListSerializer):
     y_sales_revenue = serializers.SerializerMethodField()
 
     def get_y_sales_revenue(self, obj):
@@ -164,7 +164,7 @@ class PreviousSevenMonthsRevenueSerializer(BaseHalfYearsMonthsListSerializer):
             item['order_date__month'] = '%s%s' % (db_list_year[index]['order_date__year'], item['order_date__month'])
         result_list = list(db_list_month)
         db_list_month = [item['order_date__month'] for item in result_list]
-        half_years_month_list = self.get_pre_half_years_month_list()
+        half_years_month_list = self.get_pre_seven_months_list()
         for m in half_years_month_list:
             if m not in db_list_month:
                 result_list.append({'order_date__month': m, 'total_value': 0})
