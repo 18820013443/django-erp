@@ -154,14 +154,17 @@ class PreviousSevenMonthsRevenueSerializer(BaseSevenMonthsListSerializer):
         str_from_date = a.now().shift(months=-5).replace(day=1).strftime('%Y-%m-%d')
         # db_list = OrdersHeader.objects.values('order_date__month').annotate(total_value=Sum('order_price')) \
         #     .filter(order_date__gte=str_from_date)
-        db_list_year = OrdersHeader.objects.values('order_date__year').annotate(total_value=Sum('order_price')) \
-            .filter(order_date__gte=str_from_date)
-        db_list_month = OrdersHeader.objects.values('order_date__month').annotate(total_value=Sum('order_price')) \
-            .filter(order_date__gte=str_from_date)
-        for index, item in enumerate(db_list_month):
+        db_list_month = OrdersHeader.objects.values('order_date__year', 'order_date__month').annotate(total_value=Sum('order_price')).filter(order_date__gte=str_from_date)
+        # db_list_month = OrdersHeader.objects.values('order_date__month').annotate(total_value=Sum('order_price')) \
+        #     .filter(order_date__gte=str_from_date)
+        # for index, item in enumerate(db_list_month):
+        for item in db_list_month:
             if len(str(item['order_date__month'])) == 1:
                 item['order_date__month'] = '0%s' % (item['order_date__month'])
-            item['order_date__month'] = '%s%s' % (db_list_year[index]['order_date__year'], item['order_date__month'])
+            order_date__month = str(item['order_date__year']) + str(item['order_date__month'])
+            item['order_date__month'] = order_date__month
+            item.pop('order_date__year')
+            # item['order_date__month'] = '%s%s' % (db_list_year[index]['order_date__year'], item['order_date__month'])
         result_list = list(db_list_month)
         db_list_month = [item['order_date__month'] for item in result_list]
         half_years_month_list = self.get_pre_seven_months_list()
@@ -188,19 +191,5 @@ class TopSevenCustomersSerializer(serializers.Serializer):
     @property
     def get_db_list(self):
         db_list = OrdersHeader.objects.values('customer_id__name').annotate(total_order_price=Sum('order_price')) \
-            .order_by('-total_order_price')[:7]
+                      .order_by('-total_order_price')[:7]
         return db_list
-
-
-
-
-
-
-
-
-
-
-
-
-
-
