@@ -65,10 +65,10 @@ class PreviousSevenDaysSalesCountView(APIView):
 #     serializer_class = PreviousHalfYearsMonthsRevenueSerializer
 #     queryset = OrdersHeader.objects.all()[:1]
 
-class PreviousHalfYearsMonthsRevenueView(APIView):
+class PreviousSevenMonthsRevenueView(APIView):
     def get(self, request):
         qs = OrdersHeader.objects.all().first()
-        serializer = PreviousHalfYearsMonthsRevenueSerializer(instance=qs)
+        serializer = PreviousSevenMonthsRevenueSerializer(instance=qs)
         return Response(serializer.data)
 
 
@@ -76,8 +76,8 @@ class PreviousHalfYearsMonthsRevenueView(APIView):
 #     serializer_class = TopTenCustomersSerializer
 #     queryset = OrdersHeader.objects.all()[:1]
 
-class TopTenCustomersView(APIView):
+class TopSevenCustomersView(APIView):
     def get(self, request):
         qs = OrdersHeader.objects.all().first()
-        serializer = TopTenCustomersSerializer(instance=qs)
+        serializer = TopSevenCustomersSerializer(instance=qs)
         return Response(serializer.data)
