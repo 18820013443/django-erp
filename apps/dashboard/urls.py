@@ -7,6 +7,6 @@ urlpatterns = [
     re_path('^seven_dates_revenue/$', PreviousSevenDaysRevenueView.as_view()),
     re_path('^seven_dates_orders/$', PreviousSevenDaysOrdersCountView.as_view()),
     re_path('^seven_dates_sales/$', PreviousSevenDaysSalesCountView.as_view()),
-    re_path('^six_months_revenue/$', PreviousHalfYearsMonthsRevenueView.as_view()),
-    re_path('^top_ten_customers/$', TopTenCustomersView.as_view())
+    re_path('^seven_months_revenue/$', PreviousHalfYearsMonthsRevenueView.as_view()),
+    re_path('^top_seven_customers/$', TopTenCustomersView.as_view())
 ]

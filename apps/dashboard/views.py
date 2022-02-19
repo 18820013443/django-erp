@@ -1,6 +1,6 @@
 from dashboard.serializers import TotalSummarySerializer, PreviousSevenDaysRevenueSerializer\
     , PreviousSevenDaysOrdersCountSerializer, PreviousSevenDaysSalesCountSerializer,\
-    PreviousHalfYearsMonthsRevenueSerializer, TopTenCustomersSerializer
+    PreviousSevenMonthsRevenueSerializer, TopSevenCustomersSerializer
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView

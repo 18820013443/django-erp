@@ -147,7 +147,7 @@ class PreviousSevenDaysSalesCountSerializer(BaseDateListSerializer):
         return result_list
 
 
-class PreviousHalfYearsMonthsRevenueSerializer(BaseHalfYearsMonthsListSerializer):
+class PreviousSevenMonthsRevenueSerializer(BaseHalfYearsMonthsListSerializer):
     y_sales_revenue = serializers.SerializerMethodField()
 
     def get_y_sales_revenue(self, obj):
@@ -173,7 +173,7 @@ class PreviousHalfYearsMonthsRevenueSerializer(BaseHalfYearsMonthsListSerializer
         return result_list
 
 
-class TopTenCustomersSerializer(serializers.Serializer):
+class TopSevenCustomersSerializer(serializers.Serializer):
     customer_names = serializers.SerializerMethodField()
     total_order_price = serializers.SerializerMethodField()
 
@@ -188,7 +188,7 @@ class TopTenCustomersSerializer(serializers.Serializer):
     @property
     def get_db_list(self):
         db_list = OrdersHeader.objects.values('customer_id__name').annotate(total_order_price=Sum('order_price')) \
-            .order_by('-total_order_price')[:10]
+            .order_by('-total_order_price')[:7]
         return db_list
 
 
